@@ -101,7 +101,7 @@ if __name__=="__main__":
 
         for images in test_data_loader:
 
-            images = (images,)
+            
             images = list(image.to(device) for image in images)
             outputs = model(images)
 
