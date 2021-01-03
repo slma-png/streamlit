@@ -130,7 +130,7 @@ if __name__ == "__main__":
     
 
         ax.set_axis_off()
-        st.image(cv2.cvtcolor(np.array(sample)))
+        st.image(sample,clamp=True)
         st.write("# Results")
         st.dataframe(pd.DataFrame(results))
     else:
