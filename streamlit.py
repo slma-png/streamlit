@@ -102,7 +102,8 @@ if __name__=="__main__":
         for images in test_data_loader:
             
             images = torch.Tensor([images[0][0], images[1][0], images[2][0]])
-#             images = (images,)
+            images = torch.reshape(images, (3, 1024, 1024))
+            images = (images,)
             images = list(image.to(device) for image in images)
             outputs = model(images)
 
