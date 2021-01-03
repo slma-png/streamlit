@@ -68,7 +68,7 @@ if __name__=="__main__":
     st.subheader("checking subheader")
     uploaded_file = st.file_uploader("CHoose an image___",type="jpg")
     button = st.button("conform")
-    weights_file="https://drive.google.com/file/d/1-I523z0SNl1y95tEVTFm6QHkjibeVrqm/view?usp=sharing"
+    weights_file="weights.pth"
     
     model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained = False,pretrained_backbone=False)
     device = torch.device('cuda') if torch.cuda.is_available() else 'cpu'
