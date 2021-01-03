@@ -123,13 +123,13 @@ if __name__ == "__main__":
         boxes = boxes[scores >= detection_threshold].astype(np.int32)
         fig, ax = plt.subplots(1, 1, figsize=(32, 16))
         for box in boxes:
-            cv2.rectangle(sample,
+            cv2.rectangle(img=sample,
                           (box[0], box[1]),
                           (box[2], box[3]),
                           (220, 0, 0), 2)
     
         ax.set_axis_off()
-        sample = np.array(sample)
+        img = np.array(img)
         st.image(cv2.UMat.get(sample), clamp=True)
         st.write("# Results")
         st.dataframe(pd.DataFrame(results))    
