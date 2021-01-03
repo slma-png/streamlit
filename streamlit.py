@@ -27,18 +27,13 @@ class Wheatdatasets(Dataset):
         
         super().__init__()
     
-        self.image_id = dataframe['image_id'].unique()
-        self.df = dataframe
+        self.image = [image]
         self.img_dir = image_dir
         self.transforms = transforms
         
-    def __getitem__(self,index:int):
-        
-        image_id = self.image_id[index]
-        record = self.df[self.df['image_id']==image_id]
-        
-        image = cv2.imread(self.img_dir+image_id+'.jpg',cv2.IMREAD_COLOR)
-        image = cv2.cvtColor(image,cv2.COLOR_BGR2RGB).astype(np.float32)
+    def __getitem__(self,index):
+       
+        image = cv2.cvtColor(np.asarray(self.image[index]),cv2.COLOR_BGR2RGB).astype(np.float32)
         image = image/255.0
        
         if self.transforms:
@@ -47,12 +42,11 @@ class Wheatdatasets(Dataset):
             }
             sample =self.transforms(**sample)
             image = sample['image']
-            
-            return image,image_id
-        
-    def __len__(self) -> int:
-        return self.image_id.shape[0]
+         
+        return np.asarray(image)
     
+    def __len__(self) -> int:
+        return len(self.image)
     
 # Albumentations
 def get_test_transform():
@@ -67,14 +61,14 @@ def collate_fn(batch):
 
 
 if __name__=="__main__":
-    st.header("did it worked, did it worked")
+    st.header("did it worked ?, did it worked ?")
     st.subheader("checking subheader")
     uploaded_file = st.file_uploader("CHoose an image___",type="jpg")
     button = st.button("Conform")
-    weights_file="https://github.com/Anubhav1107/streamlit/blob/master/fasterrcnn.pth"
+    weights_file="fasterrcnn.pth"
     
     model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained = False,pretrained_backbone=False)
-    device = torch.device('cuda') if torch.cuda.is_available() else 'cpu'
+    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     num_class = 2 #wheats and background
 
     in_feature = model.roi_heads.box_predictor.cls_score.in_features
@@ -91,11 +85,11 @@ if __name__=="__main__":
     images = None
     
     if button and uploaded_file is not None:
-        image = Image.open("uploaded_file")
-        st.image(image,caption="Uploaded Image",use_column_width = True)
+        image = Image.open(uploaded_file)
+        st.image(image, caption='Uploaded Image', use_column_width=True)
         st.write("")
-        st.write("Detecting..........")
-        test_dataset = Wheatdatasets(image,get_test_transform())
+        st.write("Detecting...")
+        test_dataset = WheatTestDataset(image, get_test_transform())
         test_data_loader = DataLoader(
             test_dataset,
             batch_size=1,
@@ -104,33 +98,31 @@ if __name__=="__main__":
             drop_last=False,
             collate_fn=collate_fn
         )
+
         for images in test_data_loader:
             images = torch.Tensor([images[0][0], images[1][0], images[2][0]])
             images = torch.reshape(images, (3, 1024, 1024))
             images = (images,)
             images = list(image.to(device) for image in images)
             outputs = model(images)
-            
 
             for i, image in enumerate(images):
-
                 boxes = outputs[i]['boxes'].data.cpu().numpy()
                 scores = outputs[i]['scores'].data.cpu().numpy()
 
                 boxes = boxes[scores >= detection_threshold].astype(np.int32)
                 scores = scores[scores >= detection_threshold]
-                image_id = image_ids[i]
 
                 boxes[:, 2] = boxes[:, 2] - boxes[:, 0]
                 boxes[:, 3] = boxes[:, 3] - boxes[:, 1]
 
-                for j in zip(boxes,scores):
+                for j in zip(boxes, scores):
                     result = {
-                        "Detected Boxes": "{} {} {} {}".format(j[0][0],j[0][1],j[0][2],j[0][3]),
-                        "Confidences%":j[1]
+                        'Detected Boxes': "{} {} {} {}".format(j[0][0], j[0][1], j[0][2], j[0][3]),
+                        'Confidence%': j[1]
                     }
                     results.append(result)
-                    
+
     if len(results) != 0:
         # print out results
         sample = images[0].permute(1, 2, 0).cpu().numpy()
@@ -153,7 +145,7 @@ if __name__=="__main__":
         st.write("""
         No wheat heads detected in the image!
         """)
-    
+
     
     
     
