@@ -126,7 +126,7 @@ if __name__ == "__main__":
             cv2.rectangle(img=sample,
                           pt1=(box[0], box[1]),
                           pt2=(box[2], box[3]),
-                          color=(220, 0, 0), thickness=2)
+                          color=(220, 0, 0))
     
         ax.set_axis_off()
         img = np.array(img)
