@@ -1,46 +1,56 @@
+import streamlit as st
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import re
-from PIL import Image
 import torch
+import cv2
+from torchvision import datasets,transforms
+from glob import glob
+import os
+from PIL import Image
+from matplotlib import patches
+from torch.utils.data import Dataset
 import torchvision
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
-import streamlit as st
-from torch.utils.data import DataLoader, Dataset
-from matplotlib import pyplot as plt
-import cv2
+from torchvision.models.detection import FasterRCNN
+from torchvision.models.detection.rpn import AnchorGenerator
+from torch.utils.data import DataLoader
+import albumentations as al
 from albumentations.pytorch.transforms import ToTensorV2
-import albumentations as A
 
-class WheatTestDataset(Dataset):
 
-    def __init__(self, image, transforms=None):
+
+class Wheatdatasets(Dataset):
+    
+    def __init__(self,dataframe,image_dir,transforms = None):
+        
         super().__init__()
-        self.transforms = transforms
+    
         self.image = [image]
-
-    def __getitem__(self, index):
-        image = cv2.cvtColor(np.asarray(self.image[index]), cv2.COLOR_BGR2RGB).astype(np.float32)
-        # st.write('image', image)
-        # image = np.asarray(self.image[index]).astype(np.float32)
-        image /= 255.0
-
+        self.img_dir = image_dir
+        self.transforms = transforms
+        
+    def __getitem__(self,index):
+       
+        image = cv2.cvtColor(np.asarray(self.image[index]),cv2.COLOR_BGR2RGB).astype(np.float32)
+        image = image/255.0
+       
         if self.transforms:
-            sample = {
-                'image': image,
+            sample ={
+                'image':image
             }
-            sample = self.transforms(**sample)
+            sample =self.transforms(**sample)
             image = sample['image']
-
+         
         return np.asarray(image)
-
+    
     def __len__(self) -> int:
         return len(self.image)
-
-
+    
 # Albumentations
 def get_test_transform():
-    return A.Compose([
+    return al.Compose([
         # A.Resize(512, 512),
         ToTensorV2(p=1.0)
     ])
@@ -50,38 +60,36 @@ def collate_fn(batch):
     return tuple(zip(*batch))
 
 
-if __name__ == "__main__":
-    st.header("""
-    WELCOME TO GLOBAL WHEAT HEAD CHALLENGE!
-    """)
-    st.subheader('Please open this website with Google Chrome.')
-    uploaded_file = st.file_uploader("Choose an image... (jpg only)", type="jpg")
-    confidence_threshold = st.number_input('Please specify the confidence of a wheat head')
-    button = st.button('Confirm')
-    WEIGHTS_FILE = 'fasterrcnn.pth'
-    # load a model; pre-trained on COCO
-    model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=False, pretrained_backbone=False)
+if __name__=="__main__":
+    st.header("did it worked ?, did it worked ?")
+    st.subheader("checking subheader")
+    uploaded_file = st.file_uploader("CHoose an image___",type="jpg")
+    button = st.button("Conform")
+    weights_file="fasterrcnn.pth"
+    
+    model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained = False,pretrained_backbone=False)
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-    num_classes = 2  # 1 class (wheat) + background
-    # get number of input features for the classifier
-    in_features = model.roi_heads.box_predictor.cls_score.in_features
-    # replace the pre-trained head with a new one
-    model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
-    # Load the trained weights
-    model.load_state_dict(torch.load(WEIGHTS_FILE, map_location=device))
-    model.eval()
+    num_class = 2 #wheats and background
 
-    detection_threshold = confidence_threshold or 0.5
+    in_feature = model.roi_heads.box_predictor.cls_score.in_features
+
+    model.roi_heads.box_predictor = FastRCNNPredictor(in_feature,num_class) #changin the pretrained head with a new one
+
+    model.load_state_dict(torch.load(weights_file, map_location=device))
+    model.eval()
+    
+    
+    detection_threshold = 0.5
     results = []
     outputs = None
     images = None
-
+    
     if button and uploaded_file is not None:
         image = Image.open(uploaded_file)
         st.image(image, caption='Uploaded Image', use_column_width=True)
         st.write("")
         st.write("Detecting...")
-        test_dataset = WheatTestDataset(image, get_test_transform())
+        test_dataset = Wheatdatasets(image, get_test_transform())
         test_data_loader = DataLoader(
             test_dataset,
             batch_size=1,
@@ -137,3 +145,8 @@ if __name__ == "__main__":
         st.write("""
         No wheat heads detected in the image!
         """)
+
+    
+    
+    
+    
