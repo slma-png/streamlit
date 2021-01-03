@@ -78,7 +78,7 @@ if __name__=="__main__":
 
     model.roi_heads.box_predictor = FastRCNNPredictor(in_feature,num_class) #changin the pretrained head with a new one
 
-    model.load_state_dict(torch.load(weights_file))
+    model.load_state_dict(torch.load(weights_file, map_location=device))
     model.eval()
     
     
