@@ -89,7 +89,7 @@ if __name__=="__main__":
         st.image(image, caption='Uploaded Image', use_column_width=True)
         st.write("")
         st.write("Detecting...")
-        test_dataset = WheatTestDataset(image, get_test_transform())
+        test_dataset = WheatDatasets(image, get_test_transform())
         test_data_loader = DataLoader(
             test_dataset,
             batch_size=1,
