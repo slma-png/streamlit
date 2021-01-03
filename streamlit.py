@@ -129,7 +129,9 @@ if __name__ == "__main__":
                           (220, 0, 0), 2)
     
         ax.set_axis_off()
-        ax.imshow(sample)    
+        st.image(cv2.UMat.get(sample), clamp=True)
+        st.write("# Results")
+        st.dataframe(pd.DataFrame(results))    
     else:
         st.write("")
         st.write("""
