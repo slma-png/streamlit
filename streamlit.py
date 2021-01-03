@@ -124,8 +124,8 @@ if __name__ == "__main__":
         fig, ax = plt.subplots(1, 1, figsize=(32, 16))
         for box in boxes:
             cv2.rectangle(img=sample,
-                          (box[0], box[1]),
-                          (box[2], box[3]),
+                          pt1=(box[0], box[1]),
+                          pt2=(box[2], box[3]),
                           (220, 0, 0), 2)
     
         ax.set_axis_off()
