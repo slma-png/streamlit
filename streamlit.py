@@ -122,9 +122,11 @@ if __name__ == "__main__":
         scores = outputs[0]['scores'].data.cpu().numpy()
         boxes = boxes[scores >= detection_threshold].astype(np.int32)
         fig, ax = plt.subplots(1, 1, figsize=(32, 16))
-        
-         x1, y1, x2, y2 = box
-         sample = cv2.rectangle(img=sample,
+        for box in boxes:
+            
+            
+            x1, y1, x2, y2 = box
+            sample = cv2.rectangle(img=sample,
                                    pt1=(x1, y1),
                                    pt2=(x2, y2),
                                    color=(0, 0, 255), thickness=3)
