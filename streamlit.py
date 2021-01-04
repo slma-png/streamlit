@@ -11,6 +11,7 @@ from matplotlib import pyplot as plt
 import cv2
 from albumentations.pytorch.transforms import ToTensorV2
 import albumentations as A
+from pathlib import Path
 
 class WheatTestDataset(Dataset):
 
@@ -68,7 +69,7 @@ if __name__ == "__main__":
     # replace the pre-trained head with a new one
     model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
     # Load the trained weights
-    model.load_state_dict(torch.load(WEIGHTS_FILE, map_location=device))
+    model.load_state_dict(torch.load(WEIGHTS_FILE))
     model.eval()
 
     detection_threshold = confidence_threshold or 0.5
