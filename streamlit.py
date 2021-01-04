@@ -59,7 +59,7 @@ if __name__ == "__main__":
     uploaded_file = st.file_uploader("Choose an image... (jpg only)", type="jpg")
     confidence_threshold = st.number_input('Please specify the confidence of a wheat head')
     button = st.button('Confirm')
-    WEIGHTS_FILE = r'fasterrcnn.pth'
+    WEIGHTS_FILE = 'fasterrcnn.pth'
     # load a model; pre-trained on COCO
     model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=False, pretrained_backbone=False)
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -69,13 +69,14 @@ if __name__ == "__main__":
     # replace the pre-trained head with a new one
     model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
     # Load the trained weights
-    model.load_state_dict(torch.load(WEIGHTS_FILE))
+    model.load_state_dict(torch.load(WEIGHTS_FILE, map_location=device))
     model.eval()
 
     detection_threshold = confidence_threshold or 0.5
     results = []
     outputs = None
     images = None
+
 
     if button and uploaded_file is not None:
         image = Image.open(uploaded_file)
