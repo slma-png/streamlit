@@ -44,7 +44,7 @@ def collate_fn(batch):
 
 import urllib.request
 
-url = 'https://sandbox.zenodo.org/api/files/073b7260-076c-4da2-aaed-b181c93f801b/fasterrcnn.pth?versionId=e28ee2b0-8107-4ce0-a10c-9030566facee'
+url = 'https://zenodo.org/api/files/7f9c262a-20d1-4b10-b8ca-2e109e384c19/fasterrcnn.pth'
 urllib.request.urlretrieve(url, 'faster.pth')
 
 
