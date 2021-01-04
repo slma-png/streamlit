@@ -50,6 +50,23 @@ def get_test_transform():
 def collate_fn(batch):
     return tuple(zip(*batch))
 
+@st.cache
+cloud_model_location = "10EvSw8syY6vMEw5Om6QQTaKkkD_cA_Go"
+def load_model():
+
+    save_dest = Path('model')
+    save_dest.mkdir(exist_ok=True)
+    
+    f_checkpoint = Path("streamlit/fasterrcnn.pth")
+
+    if not f_checkpoint.exists():
+        with st.spinner("Downloading model... this may take awhile! \n Don't stop it!"):
+            from GD_download import download_file_from_google_drive
+            download_file_from_google_drive(cloud_model_location, f_checkpoint)
+    
+    model = torch.load(f_checkpoint, map_location=device)
+    model.eval()
+    return model
 
 if __name__ == "__main__":
     st.header("""
