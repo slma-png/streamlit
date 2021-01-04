@@ -12,62 +12,33 @@ import cv2
 from albumentations.pytorch.transforms import ToTensorV2
 import albumentations as A
 from pathlib import Path
-
 class WheatTestDataset(Dataset):
-
     def __init__(self, image, transforms=None):
         super().__init__()
         self.transforms = transforms
         self.image = [image]
-
     def __getitem__(self, index):
         image = cv2.cvtColor(np.asarray(self.image[index]), cv2.COLOR_BGR2RGB).astype(np.float32)
         # st.write('image', image)
         # image = np.asarray(self.image[index]).astype(np.float32)
         image /= 255.0
-
         if self.transforms:
             sample = {
                 'image': image,
             }
             sample = self.transforms(**sample)
             image = sample['image']
-
         return np.asarray(image)
-
     def __len__(self) -> int:
         return len(self.image)
-
-
 # Albumentations
 def get_test_transform():
     return A.Compose([
         # A.Resize(512, 512),
         ToTensorV2(p=1.0)
     ])
-
-
 def collate_fn(batch):
     return tuple(zip(*batch))
-
-@st.cache
-cloud_model_location = "10EvSw8syY6vMEw5Om6QQTaKkkD_cA_Go"
-def load_model():
-
-    save_dest = Path('model')
-    save_dest.mkdir(exist_ok=True)
-    
-    f_checkpoint = Path("streamlit/fasterrcnn.pth")
-
-    if not f_checkpoint.exists():
-        with st.spinner("Downloading model... this may take awhile! \n Don't stop it!"):
-            from GD_download import download_file_from_google_drive
-            download_file_from_google_drive(cloud_model_location, f_checkpoint)
-    
-    model = torch.load(f_checkpoint, map_location=device)
-    model.eval()
-    return model
-
 if __name__ == "__main__":
     st.header("""
     WELCOME TO GLOBAL WHEAT HEAD CHALLENGE!
@@ -76,7 +47,8 @@ if __name__ == "__main__":
     uploaded_file = st.file_uploader("Choose an image... (jpg only)", type="jpg")
     confidence_threshold = st.number_input('Please specify the confidence of a wheat head')
     button = st.button('Confirm')
-    #WEIGHTS_FILE = 'fasterrcnn.pth'
+    
+    WEIGHTS_FILE = 'fasterrcnn.pth'
     # load a model; pre-trained on COCO
     model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=False, pretrained_backbone=False)
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -86,15 +58,12 @@ if __name__ == "__main__":
     # replace the pre-trained head with a new one
     model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
     # Load the trained weights
-    model.load_state_dict(torch.load("https://www.dropbox.com/s/18nypfznoswi12u/fasterrcnn.pth?dl=0", map_location=device))
+    model.load_state_dict(torch.load(WEIGHTS_FILE, map_location=device))
     model.eval()
-
     detection_threshold = confidence_threshold or 0.5
     results = []
     outputs = None
     images = None
-
-
     if button and uploaded_file is not None:
         image = Image.open(uploaded_file)
         st.image(image, caption='Uploaded Image', use_column_width=True)
@@ -109,31 +78,25 @@ if __name__ == "__main__":
             drop_last=False,
             collate_fn=collate_fn
         )
-
         for images in test_data_loader:
             images = torch.Tensor([images[0][0], images[1][0], images[2][0]])
             images = torch.reshape(images, (3, 1024, 1024))
             images = (images,)
             images = list(image.to(device) for image in images)
             outputs = model(images)
-
             for i, image in enumerate(images):
                 boxes = outputs[i]['boxes'].data.cpu().numpy()
                 scores = outputs[i]['scores'].data.cpu().numpy()
-
                 boxes = boxes[scores >= detection_threshold].astype(np.int32)
                 scores = scores[scores >= detection_threshold]
-
                 boxes[:, 2] = boxes[:, 2] - boxes[:, 0]
                 boxes[:, 3] = boxes[:, 3] - boxes[:, 1]
-
                 for j in zip(boxes, scores):
                     result = {
                         'Detected Boxes': "{} {} {} {}".format(j[0][0], j[0][1], j[0][2], j[0][3]),
                         'Confidence%': j[1]
                     }
                     results.append(result)
-
     if len(results) != 0:
         # print out results
         sample = images[0].permute(1, 2, 0).cpu().numpy()
@@ -149,7 +112,6 @@ if __name__ == "__main__":
                           (x2, y2),
                           (220, 0, 0), 2)
     
-
         ax.set_axis_off()
         st.image(sample,clamp=True)
         st.write("# Results")
