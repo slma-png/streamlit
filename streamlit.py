@@ -123,7 +123,7 @@ if __name__ == "__main__":
         boxes = boxes[scores >= detection_threshold].astype(np.int32)
         fig, ax = plt.subplots(1, 1, figsize=(32, 16))
         for box in boxes:
-            cv2.rectangle(sample=sample.copy(),
+            cv2.rectangle(img=sample.copy(),
                           pt1= (int(box[0]), int(box[1])),
                           pt2 = (int(box[2]), int(box[3])),
                           color=(220, 0, 0), thickness=2)
