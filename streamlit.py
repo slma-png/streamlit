@@ -44,8 +44,8 @@ def collate_fn(batch):
 
 import urllib.request
 
-url = 'https://zenodo.org/api/files/7f9c262a-20d1-4b10-b8ca-2e109e384c19/fasterrcnn.pth'
-urllib.request.urlretrieve(url, 'faster.pth')
+url1 = 'https://zenodo.org/api/files/7f9c262a-20d1-4b10-b8ca-2e109e384c19/fasterrcnn.pth'
+#urllib.request.urlretrieve(url, 'faster.pth')
 
 
 # @functools.lru_cache()
@@ -89,7 +89,7 @@ if __name__ == "__main__":
     confidence_threshold = st.number_input('Please specify the confidence of a wheat head')
     button = st.button('Confirm')
     
-    WEIGHTS_FILE = 'faster.pth'
+    WEIGHTS_FILE = url1
     # load a model; pre-trained on COCO
     model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=False, pretrained_backbone=False)
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
