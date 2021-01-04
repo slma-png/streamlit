@@ -122,9 +122,10 @@ if __name__ == "__main__":
         scores = outputs[0]['scores'].data.cpu().numpy()
         boxes = boxes[scores >= detection_threshold].astype(np.int32)
         fig, ax = plt.subplots(1, 1, figsize=(16, 8))
+        sample = sample.copy()
         for box in boxes:
             x1, y1, x2, y2 = box
-            cv2.rectangle(sample.copy(),
+            cv2.rectangle(sample,
                           (x1, y1),
                           (x2, y2),
                           (220, 0, 0), 2)
