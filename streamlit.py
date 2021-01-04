@@ -39,6 +39,49 @@ def get_test_transform():
     ])
 def collate_fn(batch):
     return tuple(zip(*batch))
+
+
+
+import urllib.request
+
+url = 'https://github.com/Anubhav1107/streamlit/releases/tag/fasterrcnn.pth'
+filename = url.split('/')[-1]
+
+urllib.request.urlretrieve(url, filename)
+
+
+# @functools.lru_cache()
+# def create_download_progress_bar():
+#     class DownloadProgressBar(tqdm.tqdm):
+#         def update_to(self, b=1, bsize=1, tsize=None):
+#             if tsize is not None:
+#                 self.total = tsize
+#             self.update(b * bsize - self.n)
+
+#     return DownloadProgressBar
+
+
+# @retry.retry((urllib.error.HTTPError, ConnectionResetError))
+# def download_with_progress(url, filepath):
+#     DownloadProgressBar = create_download_progress_bar()
+
+#     with DownloadProgressBar(
+#         unit="B", unit_scale=True, miniters=1, desc=url.split("/")[-1]
+#     ) as t:
+#         urllib.request.urlretrieve(url, filepath, reporthook=t.update_to)
+
+
+# def get_data_dir():
+#     data_dir = pmp_config.get_config_dir().joinpath("data")
+#     data_dir.mkdir(exist_ok=True)
+
+#     return data_dir
+
+
+
+
+
+
 if __name__ == "__main__":
     st.header("""
     WELCOME TO GLOBAL WHEAT HEAD CHALLENGE!
@@ -48,7 +91,7 @@ if __name__ == "__main__":
     confidence_threshold = st.number_input('Please specify the confidence of a wheat head')
     button = st.button('Confirm')
     
-    WEIGHTS_FILE = 'fasterrcnn.pth'
+    WEIGHTS_FILE = 'filename'
     # load a model; pre-trained on COCO
     model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=False, pretrained_backbone=False)
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
