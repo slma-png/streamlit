@@ -3,6 +3,8 @@ import pandas as pd
 import re
 from PIL import Image
 import torch
+import urllib.error
+import urllib.request
 import torchvision
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 import streamlit as st
@@ -58,6 +60,12 @@ if __name__ == "__main__":
     uploaded_file = st.file_uploader("Choose an image... (jpg only)", type="jpg")
     confidence_threshold = st.number_input('Please specify the confidence of a wheat head')
     button = st.button('Confirm')
+    import urllib.request
+
+    url = 'https://github.com/Anubhav1107/streamlit/releases/download/fasterrcnn.pth'
+    filename = url.split('/')[-1]
+
+    urllib.request.urlretrieve(url, filename)
     WEIGHTS_FILE = 'fasterrcnn.pth'
     # load a model; pre-trained on COCO
     model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=False, pretrained_backbone=False)
