@@ -62,7 +62,7 @@ if __name__ == "__main__":
     button = st.button('Confirm')
     import urllib.request
 
-    url = 'https://github.com/Anubhav1107/streamlit/releases/download/fasterrcnn.pth'
+    url = 'https://github.com/Anubhav1107/streamlit/releases/download/fasterrcnn.pth/fasterrcnn.pth'
     filename = url.split('/')[-1]
 
     urllib.request.urlretrieve(url, filename)
