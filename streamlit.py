@@ -68,7 +68,7 @@ if __name__ == "__main__":
     button = st.button('Confirm')
     
 
-    download1(https://github.com/Anubhav1107/streamlit/releases/download/fasterrcnn.pth/fasterrcnn.pth)
+    download1("https://github.com/Anubhav1107/streamlit/releases/download/fasterrcnn.pth/fasterrcnn.pth")
     WEIGHTS_FILE = 'fasterrcnn.pth'
     # load a model; pre-trained on COCO
     model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=False, pretrained_backbone=False)
