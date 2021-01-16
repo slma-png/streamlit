@@ -52,11 +52,12 @@ def get_test_transform():
 def collate_fn(batch):
     return tuple(zip(*batch))
 
-@st.cache
+
 def download1(url1):
     url = url1
     filename = url.split('/')[-1]
     urllib.request.urlretrieve(url, filename)
+    
 download1("https://github.com/Anubhav1107/streamlit/releases/download/fasterrcnn.pth/fasterrcnn.pth")
 
 
