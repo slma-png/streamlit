@@ -52,7 +52,8 @@ def collate_fn(batch):
     return tuple(zip(*batch))
 import urllib.request
 @st.cache
-def download1(url1)
+def download1(url1):
+    
     url = url1
     filename = url.split('/')[-1]
     urllib.request.urlretrieve(url, filename)
