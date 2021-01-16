@@ -81,7 +81,7 @@ if __name__ == "__main__":
     # Load the trained weights
     model.load_state_dict(torch.load(WEIGHTS_FILE, map_location=device))
     model.eval()
-
+    x = model.to(device)
     detection_threshold = confidence_threshold or 0.5
     results = []
     outputs = None
