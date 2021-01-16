@@ -13,7 +13,6 @@ from matplotlib import pyplot as plt
 import cv2
 from albumentations.pytorch.transforms import ToTensorV2
 import albumentations as A
-import functools
 
 class WheatTestDataset(Dataset):
 
@@ -41,7 +40,6 @@ class WheatTestDataset(Dataset):
         return len(self.image)
 
 
-
 # Albumentations
 def get_test_transform():
     return A.Compose([
@@ -49,25 +47,25 @@ def get_test_transform():
         ToTensorV2(p=1.0)
     ])
 
+
 def collate_fn(batch):
     return tuple(zip(*batch))
-
-import urllib.request
 import urllib.request
 @st.cache
 def download1(url1):
-
     url = url1
     filename = url.split('/')[-1]
     urllib.request.urlretrieve(url, filename)
-
-
+    
+    
 download1("https://github.com/Anubhav1107/streamlit/releases/download/fasterrcnn.pth/fasterrcnn.pth")
 
 
 if __name__ == "__main__":
     st.header("""
-    WELCOME TO GLOBAL WHEAT CHALLENGE!""")
+    WELCOME TO GLOBAL WHEAT CHALLENGE!
+    """)
+    st.subheader('Please open this website with Google Chrome.')
     uploaded_file = st.file_uploader("Choose an image... (jpg only)", type="jpg")
     confidence_threshold = st.number_input('Please specify the confidence of a wheat head')
     button = st.button('Confirm')
@@ -83,7 +81,7 @@ if __name__ == "__main__":
     # Load the trained weights
     model.load_state_dict(torch.load(WEIGHTS_FILE, map_location=device))
     model.eval()
-    x = model.to(device)
+
     detection_threshold = confidence_threshold or 0.5
     results = []
     outputs = None
