@@ -50,8 +50,13 @@ def get_test_transform():
 
 def collate_fn(batch):
     return tuple(zip(*batch))
-
-
+import urllib.request
+@st.cache
+def download1(url1)
+    url = url1
+    filename = url.split('/')[-1]
+    urllib.request.urlretrieve(url, filename)
+    
 if __name__ == "__main__":
     st.header("""
     WELCOME TO GLOBAL WHEAT CHALLENGE!
@@ -60,12 +65,9 @@ if __name__ == "__main__":
     uploaded_file = st.file_uploader("Choose an image... (jpg only)", type="jpg")
     confidence_threshold = st.number_input('Please specify the confidence of a wheat head')
     button = st.button('Confirm')
-    import urllib.request
+    
 
-    url = 'https://github.com/Anubhav1107/streamlit/releases/download/fasterrcnn.pth/fasterrcnn.pth'
-    filename = url.split('/')[-1]
-
-    urllib.request.urlretrieve(url, filename)
+    download1(https://github.com/Anubhav1107/streamlit/releases/download/fasterrcnn.pth/fasterrcnn.pth)
     WEIGHTS_FILE = 'fasterrcnn.pth'
     # load a model; pre-trained on COCO
     model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=False, pretrained_backbone=False)
