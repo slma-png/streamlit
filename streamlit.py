@@ -53,6 +53,9 @@ def get_test_transform():
 def collate_fn(batch):
     return tuple(zip(*batch))
 
+
+device = torch.device('cpu')
+
 @st.cache
 def load_model():
     save_dest = Path('model')
@@ -65,7 +68,6 @@ def load_model():
     WEIGHTS_FILE = Path("model/fasterrcnn.pth")
     # load a model; pre-trained on COCO
     model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=False, pretrained_backbone=False)
-    device = torch.device('cpu')
     num_classes = 2  # 1 class (wheat) + background
     # get number of input features for the classifier
     in_features = model.roi_heads.box_predictor.cls_score.in_features
