@@ -62,7 +62,7 @@ def load_model():
     if not f_checkpoint.exists():
         #filename = url.split('/')[-1]
         urllib.request.urlretrieve(url, f_checkpoint)
-    WEIGHTS_FILE = Path("model"/'fasterrcnn.pth')
+    WEIGHTS_FILE = Path("model/fasterrcnn.pth")
     # load a model; pre-trained on COCO
     model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=False, pretrained_backbone=False)
     device = torch.device('cpu')
