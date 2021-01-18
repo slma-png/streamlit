@@ -4,6 +4,7 @@ import re
 from PIL import Image
 import torch
 import urllib.error
+from pathlib import Path
 import urllib.request
 
 import torchvision
@@ -53,11 +54,27 @@ def collate_fn(batch):
     return tuple(zip(*batch))
 
 @st.cache
-def download1():
+def load_model():
+    save_dest = Path('model')
+    save_dest.mkdir(exist_ok=True)
+    f_checkpoint = Path("model/fastercnn.pth")
     url = "https://github.com/Anubhav1107/streamlit/releases/download/fasterrcnn.pth/fasterrcnn.pth"
-    filename = url.split('/')[-1]
-    urllib.request.urlretrieve(url, filename)
-    
+    if not f_checkpoint.exists():
+        #filename = url.split('/')[-1]
+        urllib.request.urlretrieve(url, f_checkpoint)
+    WEIGHTS_FILE = Path("model"/'fasterrcnn.pth')
+    # load a model; pre-trained on COCO
+    model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=False, pretrained_backbone=False)
+    device = torch.device('cpu')
+    num_classes = 2  # 1 class (wheat) + background
+    # get number of input features for the classifier
+    in_features = model.roi_heads.box_predictor.cls_score.in_features
+    # replace the pre-trained head with a new one
+    model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
+    # Load the trained weights
+    model.load_state_dict(torch.load(WEIGHTS_FILE, map_location=device))
+    model.eval()
+    return model
 
 
 
@@ -70,18 +87,6 @@ if __name__ == "__main__":
     confidence_threshold = st.number_input('Please specify the confidence of a wheat head')
     button = st.button('Confirm')
     download1()
-    WEIGHTS_FILE = 'fasterrcnn.pth'
-    # load a model; pre-trained on COCO
-    model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=False, pretrained_backbone=False)
-    device = torch.device('cpu')
-    num_classes = 2  # 1 class (wheat) + background
-    # get number of input features for the classifier
-    in_features = model.roi_heads.box_predictor.cls_score.in_features
-    # replace the pre-trained head with a new one
-    model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
-    # Load the trained weights
-    model.load_state_dict(torch.load(WEIGHTS_FILE, map_location=device))
-    model.eval()
 
     detection_threshold = confidence_threshold or 0.5
     results = []
@@ -152,3 +157,4 @@ if __name__ == "__main__":
         st.write("""
         No wheat heads detected in the image!
         """)
+model=load_model()
