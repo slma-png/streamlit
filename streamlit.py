@@ -78,7 +78,7 @@ def load_model():
     model.eval()
     return model
 
-
+model=load_model()
 
 if __name__ == "__main__":
     st.header("""
@@ -159,4 +159,4 @@ if __name__ == "__main__":
         st.write("""
         No wheat heads detected in the image!
         """)
-model=load_model()
+
