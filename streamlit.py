@@ -57,7 +57,7 @@ def collate_fn(batch):
 def load_model():
     save_dest = Path('model')
     save_dest.mkdir(exist_ok=True)
-    f_checkpoint = Path("model/fastercnn.pth")
+    f_checkpoint = Path("model/fasterrcnn.pth")
     url = "https://github.com/Anubhav1107/streamlit/releases/download/fasterrcnn.pth/fasterrcnn.pth"
     if not f_checkpoint.exists():
         #filename = url.split('/')[-1]
