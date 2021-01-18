@@ -56,7 +56,7 @@ def collate_fn(batch):
 
 device = torch.device('cpu')
 
-@st.cache
+
 def load_model():
     save_dest = Path('model')
     save_dest.mkdir(exist_ok=True)
