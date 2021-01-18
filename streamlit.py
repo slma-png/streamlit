@@ -56,7 +56,7 @@ def collate_fn(batch):
 
 device = torch.device('cpu')
 
-
+@st.cache
 def load_model():
     save_dest = Path('model')
     save_dest.mkdir(exist_ok=True)
@@ -78,7 +78,6 @@ def load_model():
     model.eval()
     return model
 
-model=load_model()
 
 if __name__ == "__main__":
     st.header("""
@@ -115,6 +114,7 @@ if __name__ == "__main__":
             images = torch.reshape(images, (3, 1024, 1024))
             images = (images,)
             images = list(image.to(device) for image in images)
+            model=load_model()
             outputs = model(images)
 
             for i, image in enumerate(images):
