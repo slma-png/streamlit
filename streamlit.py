@@ -83,7 +83,7 @@ if __name__ == "__main__":
     st.header("""
     WELCOME TO GLOBAL WHEAT CHALLENGE!
     """)
-    st.subheader('Please open this website with Google Chrome.')
+    st.subheader('The images required for this project is in https://github.com/Anubhav1107/streamlit.')
     uploaded_file = st.file_uploader("Choose an image... (jpg only)", type="jpg")
     confidence_threshold = st.number_input('Please specify the confidence of a wheat head')
     button = st.button('Confirm')
