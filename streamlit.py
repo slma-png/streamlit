@@ -81,7 +81,7 @@ def load_model():
 
 if __name__ == "__main__":
     st.header("""
-    WELCOME TO GLOBAL WHEAT CHALLENGE!
+    WELCOME TO Batch 7 Final Year Project!
     """)
     st.subheader('The images required for this project is in https://github.com/Anubhav1107/streamlit.')
     uploaded_file = st.file_uploader("Choose an image... (jpg only)", type="jpg")
