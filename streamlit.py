@@ -77,6 +77,7 @@ def load_model():
     model.load_state_dict(torch.load(WEIGHTS_FILE, map_location=device))
     model.eval()
     return model
+load_model.clear()
 
 
 if __name__ == "__main__":
